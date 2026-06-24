@@ -72,14 +72,10 @@
       --with-stream_geoip_module=dynamic \
       --add-dynamic-module=/root/mknginx/nginx-acme-{{ nginxAcmeVersion }}
     executable: /bin/bash
-  tags:
-    - configure
 - name: 编译安装nginx
   ansible.builtin.shell:
     chdir: /root/mknginx/nginx-{{ nginxVersion }}
     cmd: "make -j $(nproc) && make install"
-  tags:
-    - configure
 - name: 创建软连接
   file:
     src: /usr/share/nginx/sbin/nginx
@@ -96,12 +92,5 @@
       dest: /etc/nginx/nginx.conf
     - src: vhost.conf.j2
       dest: "/etc/nginx/conf.d/{{ domain.split('.')[0] }}.conf"
-  tags:
-    - configure
-    - test_conf
-- name: 启动nginx
-  ansible.builtin.systemd:
-    name: nginx
-    daemon_reload: yes
-    enabled: yes
-    state: started
+  notify:
+    - Restart Nginx

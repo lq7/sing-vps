@@ -27,7 +27,7 @@
     state: directory
   loop:
     - /etc/sing-box
-    - /etc/caddy
+    # - /etc/caddy
 - name: 渲染配置文件
   ansible.builtin.template:
     src: "{{ item.src }}"

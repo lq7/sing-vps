@@ -1,3 +1,14 @@
-#SPDX-License-Identifier: MIT-0
 ---
 # handlers file for roles/sing-vps
+- name: Restart Sing-Box 
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    name: sing-box
+    state: started
+    enabled: yes
+- name: Restart Nginx 
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    name: nginx
+    state: started
+    enabled: yes

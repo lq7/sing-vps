@@ -6,6 +6,7 @@
     - sing-vps
   vars:
     domain: "{{ domain }}"
+    uuid: c5272926-6763-4edf-a8a9-71f2b600bfab
     singBoxVersion: 1.13.13
     vaultwardenVersion: 1.36.0
     nginxVersion: 1.30.3
