@@ -6,6 +6,5 @@
   ansible.builtin.import_tasks: client.yaml
 - name: Import vaultwarden
   ansible.builtin.import_tasks: vaultwarden.yaml
-  when: vaultwarden is true
 - name: 编译安装nginx
   ansible.builtin.import_tasks: nginx.yaml

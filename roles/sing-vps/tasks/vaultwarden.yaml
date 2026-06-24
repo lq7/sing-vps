@@ -2,7 +2,6 @@
   apt:
     name: podman
     state:  present
-
 - name: 创建vaultwarden数据目录
   ansible.builtin.shell:
     podman volume create vaultwarden
@@ -17,12 +16,3 @@
       -e WEB_VAULT_ENABLED=true \
       -e WEBSOCKET_ENABLED=true \
       --restart=always docker.io/vaultwarden/server:{{ vaultwardenVersion }}-alpine
-  tags:
-    - config_vaultwarden
-# - name: 配置caddy
-#   ansible.builtin.template:
-#     src: caddy_with_vaultwarden.json
-#     dest: /etc/caddy/caddy.json
-#   tags:
-#     - config_vaultwarden1
-#   notify: Restart Caddy
