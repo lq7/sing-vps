@@ -1,0 +1,28 @@
+- name: 安装 podman
+  apt:
+    name: podman
+    state:  present
+
+- name: 创建vaultwarden数据目录
+  ansible.builtin.shell:
+    podman volume create vaultwarden
+- name: 运行vaultwarden
+  ansible.builtin.shell:
+     podman run -d  --name bitwarden \
+      --volume vaultwarden:/data \
+      -p 127.0.0.1:8001:80  \
+      -e SIGNUPS_ALLOWED=false \
+      -e DATABASE_URL=/data/bitwarden.db \
+      -e ROCKET_WORKERS=1 \
+      -e WEB_VAULT_ENABLED=true \
+      -e WEBSOCKET_ENABLED=true \
+      --restart=always docker.io/vaultwarden/server:{{ vaultwardenVersion }}-alpine
+  tags:
+    - config_vaultwarden
+# - name: 配置caddy
+#   ansible.builtin.template:
+#     src: caddy_with_vaultwarden.json
+#     dest: /etc/caddy/caddy.json
+#   tags:
+#     - config_vaultwarden1
+#   notify: Restart Caddy

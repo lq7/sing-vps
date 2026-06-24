@@ -1,0 +1,80 @@
+{
+  "log": {
+    "level": "info",
+    "disabled": false,
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "type": "local",
+        "tag": "local-dns"
+      }
+    ]
+  },
+  "inbounds": [
+    {
+      "type": "vless",
+      "tag": "vless-18081",
+      "listen": "127.0.0.1",
+      "listen_port": 18081,
+      "users": [
+        {
+          "name": "vless-ws@live.com",
+          "uuid": "{{ uuid }}"
+        }
+      ],
+      "transport": {
+        "type": "ws",
+        "path": "/wsbackend",
+        "max_early_data": 2048,
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "direct",
+      "tag": "direct"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "rule_set": "CATEGORY-ADS",
+        "action": "reject"
+      },
+      {
+        "rule_set": "GEOIP-CN",
+        "action": "reject"
+      },
+      {
+        "rule_set": "GEOSITE-CN",
+        "action": "reject"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "CATEGORY-ADS",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/category-ads-all.srs"
+      },
+      {
+        "type": "remote",
+        "tag": "GEOIP-CN",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs"
+      },
+      {
+        "type": "remote",
+        "tag": "GEOSITE-CN",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs"
+      }
+    ],
+    "final": "direct",
+    "auto_detect_interface": true,
+    "default_domain_resolver": {
+      "server": "local-dns",
+      "rewrite_ttl": 60
+    }
+  }
+}

@@ -1,0 +1,14 @@
+[Unit]
+Description=Sing-Box
+After=syslog.target network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/etc/sing-box
+ExecStart=/usr/local/bin/sing-box run -c /etc/sing-box/server.json
+ExecStop=/bin/kill -TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

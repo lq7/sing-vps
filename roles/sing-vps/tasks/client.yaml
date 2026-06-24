@@ -1,0 +1,4 @@
+- name: 生成客户端outbound
+  ansible.builtin.template:
+    src: outbound.json.j2
+    dest: /tmp/outbound.json

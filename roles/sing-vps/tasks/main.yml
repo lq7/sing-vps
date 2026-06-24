@@ -1,0 +1,11 @@
+- name: Enable BBR
+  ansible.builtin.import_tasks: bbr.yaml
+- name: Import sing-box
+  ansible.builtin.import_tasks: sing-box.yaml
+- name: Import client
+  ansible.builtin.import_tasks: client.yaml
+- name: Import vaultwarden
+  ansible.builtin.import_tasks: vaultwarden.yaml
+  when: vaultwarden is true
+- name: 编译安装nginx
+  ansible.builtin.import_tasks: nginx.yaml

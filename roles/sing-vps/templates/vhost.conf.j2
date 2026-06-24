@@ -1,0 +1,57 @@
+upstream sing-box {
+    server 127.0.0.1:18081;
+}
+
+server {
+    listen 443 ssl;
+    server_name {{ domain }};
+
+    acme_certificate        letsencrypt;
+    ssl_certificate         $acme_certificate;
+    ssl_certificate_key     $acme_certificate_key;
+    ssl_certificate_cache   max=3;  
+
+    ssl_stapling on;
+    ssl_stapling_verify on; 
+    resolver 8.8.8.8 8.8.4.4 valid=60s; 
+    resolver_timeout 2s; 
+
+    location / {
+        {%- if vaultwarden %}
+        proxy_pass http://127.0.0.1:8001;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 300s;
+        {%- else %}
+        default_type text/plain;
+        return 200 'OK';
+        {%- endif %}
+    }
+
+    location /wsbackend {
+        if ($http_upgrade != "websocket") {
+            return 404;
+        }
+        proxy_pass http://sing-box;
+        proxy_redirect off;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 300s;
+    }
+}
+
+server {
+    listen 80 default_server;
+    server_name _;
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}

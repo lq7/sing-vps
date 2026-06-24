@@ -1,0 +1,25 @@
+- name: 配置文件中加载模块
+  copy:
+    content: |
+      tcp_bbr
+    dest: /etc/modules-load.d/tcp-bbr.conf
+- name: 开启BBR
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.conf
+    insertafter: EOF
+    line: |
+      net.core.default_qdisc=fq
+      net.ipv4.tcp_congestion_control=bbr
+- name: sysctl生效
+  ansible.builtin.command:
+    cmd: sysctl -p
+- block:
+  - name: 检查模块
+    ansible.builtin.shell:
+      cmd: lsmod | grep bbr
+    register: BBR
+  - name: 打印输出
+    debug: 
+      msg: "{{ BBR.stdout }}"
+  tags:
+    - test_bbr

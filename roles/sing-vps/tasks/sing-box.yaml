@@ -1,0 +1,41 @@
+---
+# - name: 生成UUID
+#   set_fact:
+#     uuid: "{{ lookup('password', '/dev/null chars=ascii_letters,digits length=32') | to_uuid }}"
+#   tags:
+#     - config
+- name: "下载 sing-box {{ singBoxVersion }}"
+  ansible.builtin.command: 
+    cmd: >-
+      curl -L -f --silent --show-error
+      -o "/tmp/sing-box-{{ singBoxVersion }}-linux-amd64.tar.gz"
+      "https://github.com/SagerNet/sing-box/releases/download/v{{ singBoxVersion }}/sing-box-{{ singBoxVersion }}-linux-amd64.tar.gz"
+  args:
+    creates: "/tmp/sing-box-{{ singBoxVersion }}-linux-amd64.tar.gz"
+- name: "解压 sing-box {{ singBoxVersion }}"
+  ansible.builtin.unarchive:
+    src: "/tmp/sing-box-{{ singBoxVersion }}-linux-amd64.tar.gz"
+    remote_src: yes
+    dest: /usr/local/bin/
+    extra_opts: 
+      - "--strip-components=1"
+      - "--wildcards"
+      - "sing-box-{{ singBoxVersion }}-linux-amd64/sing-box"
+- name: 创建配置目录
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /etc/sing-box
+    - /etc/caddy
+- name: 渲染配置文件
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: server.json.j2, dest: /etc/sing-box/server.json }
+    - { src: sing-box.service.j2, dest: /etc/systemd/system/sing-box.service }
+  notify: 
+    - Restart Sing-Box 
+  tags: 
+    - config
