@@ -74,7 +74,10 @@
 - name: 编译安装nginx
   ansible.builtin.shell:
     chdir: /root/mknginx/nginx-{{ nginxVersion }}
-    cmd: "make -j $(nproc) && make install"
+    cmd: |
+      source $HOME/.cargo/env
+      make -j $(nproc) && make install
+    executable: /bin/bash
 - name: 创建软连接
   file:
     src: /usr/share/nginx/sbin/nginx
