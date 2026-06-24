@@ -54,8 +54,6 @@
     - /var/cache/nginx/
     - /etc/nginx/conf.d/
     - /usr/share/nginx/acme/letsencrypt/
-  tags:
-    - test_conf
 - name: 准备编译参数
   ansible.builtin.shell: 
     chdir: /root/mknginx/nginx-{{ nginxVersion }}
