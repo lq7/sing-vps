@@ -4,7 +4,7 @@
   ansible.builtin.import_tasks: sing-box.yaml
 - name: Import client
   ansible.builtin.import_tasks: client.yaml
-- name: Import vaultwarden
-  ansible.builtin.import_tasks: vaultwarden.yaml
+# - name: Import vaultwarden
+#   ansible.builtin.import_tasks: vaultwarden.yaml
 - name: 编译安装nginx
   ansible.builtin.import_tasks: nginx.yaml
